@@ -16,6 +16,7 @@ const INSETS = {
 export interface DrawFrameInput {
   context: CanvasRenderingContext2D
   candles: readonly Candle[]
+  visibleCount: number
   width: number
   height: number
 }
@@ -23,6 +24,7 @@ export interface DrawFrameInput {
 export function drawFrame({
   context,
   candles,
+  visibleCount,
   width,
   height,
 }: DrawFrameInput): void {
@@ -30,7 +32,7 @@ export function drawFrame({
   context.fillStyle = '#111827'
   context.fillRect(0, 0, width, height)
 
-  const visibleCandles = getVisibleCandles(candles, 80)
+  const visibleCandles = getVisibleCandles(candles, visibleCount)
   const priceRange = calculatePriceRange(visibleCandles)
 
   if (!priceRange) {

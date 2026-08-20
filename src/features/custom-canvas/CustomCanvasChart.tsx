@@ -5,12 +5,16 @@ import './customCanvas.css'
 
 export interface CustomCanvasChartProps {
   candles: readonly Candle[]
+  visibleCount: number
 }
 
-export function CustomCanvasChart({ candles }: CustomCanvasChartProps) {
+export function CustomCanvasChart({
+  candles,
+  visibleCount,
+}: CustomCanvasChartProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
-  useCanvasRenderer(canvasRef, candles)
+  useCanvasRenderer(canvasRef, candles, visibleCount)
 
   return (
     <div className="custom-canvas-frame">

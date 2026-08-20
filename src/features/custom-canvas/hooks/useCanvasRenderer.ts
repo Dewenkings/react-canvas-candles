@@ -12,12 +12,18 @@ interface CanvasSize {
 export function useCanvasRenderer(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   candles: readonly Candle[],
+  visibleCount: number,
 ): void {
   const candlesRef = useRef(candles)
+  const visibleCountRef = useRef(visibleCount)
 
   useEffect(() => {
     candlesRef.current = candles
   }, [candles])
+
+  useEffect(() => {
+    visibleCountRef.current = visibleCount
+  }, [visibleCount])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -71,6 +77,7 @@ export function useCanvasRenderer(
         drawFrame({
           context,
           candles: candlesRef.current,
+          visibleCount: visibleCountRef.current,
           width: size.width,
           height: size.height,
         })
