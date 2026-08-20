@@ -6,6 +6,7 @@ import {
   MAX_WINDOW_MS,
 } from './features/chart-settings/chartSettings'
 import { CustomCanvasChart } from './features/custom-canvas/CustomCanvasChart'
+import { LightweightChart } from './features/lightweight-charts/LightweightChart'
 import type { VolatilityMode } from './domain/market/volatility'
 import './App.css'
 
@@ -133,6 +134,25 @@ function CandleWorkspace({
           <span className="learning-badge">DUAL CANVAS</span>
         </div>
         <CustomCanvasChart candles={candles} visibleCount={visibleCount} />
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="lightweight-chart-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="lightweight-chart-title">Lightweight Charts</h2>
+            <p>
+              setData 初始化 · update 增量更新 · 库内置坐标轴与十字线
+            </p>
+          </div>
+          <span className="learning-badge">MATURE LIBRARY</span>
+        </div>
+        <LightweightChart
+          candles={candles}
+          visibleCount={visibleCount}
+        />
       </section>
     </>
   )
