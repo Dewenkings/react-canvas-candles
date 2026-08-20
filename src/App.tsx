@@ -1,4 +1,5 @@
 import { useSimulatedFeed } from './hooks/useSimulatedFeed'
+import { CustomCanvasChart } from './features/custom-canvas/CustomCanvasChart'
 import './App.css'
 
 const CANDLE_INTERVAL_MS = 60_000
@@ -32,10 +33,10 @@ function App() {
   return (
     <main className="app-shell">
       <header className="page-header">
-        <p className="eyebrow">Phase 1 · Simulated OHLC feed</p>
+        <p className="eyebrow">Phase 2 · Custom Canvas engine</p>
         <h1>React Canvas Candles</h1>
         <p>
-          先验证历史数据生成和实时 K 线更新链路，暂不进行 Canvas 绘制。
+          从模拟 OHLC 数据到坐标映射，完整验证 React 与 Canvas 的实时绘制链路。
         </p>
       </header>
 
@@ -92,6 +93,20 @@ function App() {
         ) : (
           <p>当前没有行情数据。</p>
         )}
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="custom-chart-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="custom-chart-title">Custom Canvas</h2>
+            <p>单 Canvas · 持续 rAF · 完整重绘</p>
+          </div>
+          <span className="learning-badge">BASELINE ENGINE</span>
+        </div>
+        <CustomCanvasChart candles={candles} />
       </section>
     </main>
   )
