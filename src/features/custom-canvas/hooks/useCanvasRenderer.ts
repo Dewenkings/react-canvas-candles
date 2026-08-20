@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import type { Candle } from '../../../domain/candles/types'
 import { drawFrame } from '../engine/drawFrame'
+import type { PointerState } from '../engine/types'
 
 interface CanvasSize {
   width: number
@@ -16,6 +17,11 @@ export function useCanvasRenderer(
 ): void {
   const candlesRef = useRef(candles)
   const visibleCountRef = useRef(visibleCount)
+  const pointerRef = useRef<PointerState>({
+    x: 0,
+    y: 0,
+    isInside: false,
+  })
 
   useEffect(() => {
     candlesRef.current = candles
@@ -36,6 +42,22 @@ export function useCanvasRenderer(
     let frameId = 0
     let disposed = false
     let size: CanvasSize = { width: 0, height: 0, dpr: 1 }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const bounds = canvas.getBoundingClientRect()
+      pointerRef.current = {
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+        isInside: true,
+      }
+    }
+
+    const handlePointerLeave = () => {
+      pointerRef.current = {
+        ...pointerRef.current,
+        isInside: false,
+      }
+    }
 
     const resizeCanvas = () => {
       const bounds = canvas.getBoundingClientRect()
@@ -59,6 +81,8 @@ export function useCanvasRenderer(
 
     const observer = new ResizeObserver(resizeCanvas)
     observer.observe(canvas)
+    canvas.addEventListener('pointermove', handlePointerMove)
+    canvas.addEventListener('pointerleave', handlePointerLeave)
     resizeCanvas()
 
     const render = () => {
@@ -78,6 +102,7 @@ export function useCanvasRenderer(
           context,
           candles: candlesRef.current,
           visibleCount: visibleCountRef.current,
+          pointer: pointerRef.current,
           width: size.width,
           height: size.height,
         })
@@ -92,6 +117,8 @@ export function useCanvasRenderer(
       disposed = true
       window.cancelAnimationFrame(frameId)
       observer.disconnect()
+      canvas.removeEventListener('pointermove', handlePointerMove)
+      canvas.removeEventListener('pointerleave', handlePointerLeave)
     }
   }, [canvasRef])
 }

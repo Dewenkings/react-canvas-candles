@@ -1,14 +1,29 @@
-import type { ChartScales, PlotRect, PriceRange } from './types'
+import type { Candle } from '../../../domain/candles/types'
+import type {
+  ChartScales,
+  PlotRect,
+  PointerState,
+  PriceRange,
+} from './types'
+
+const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+})
 
 export interface DrawGridInput {
   context: CanvasRenderingContext2D
   plotRect: PlotRect
   priceRange: PriceRange
   scales: ChartScales
+  candles: readonly Candle[]
+  pointer: PointerState
 }
 
 export function drawGrid(input: DrawGridInput): void {
-  const { context, plotRect, priceRange, scales } = input
+  const { context, plotRect, priceRange, scales, candles, pointer } = input
   const horizontalLineCount = 5
   const verticalLineCount = 6
 
@@ -46,6 +61,48 @@ export function drawGrid(input: DrawGridInput): void {
       price.toFixed(2),
       plotRect.left + plotRect.width + 8,
       y,
+    )
+  }
+
+  context.textAlign = 'center'
+  context.textBaseline = 'top'
+
+  const plotRight = plotRect.left + plotRect.width
+  const plotBottom = plotRect.top + plotRect.height
+  const hoveredCandleX =
+    pointer.isInside &&
+    pointer.x >= plotRect.left &&
+    pointer.x <= plotRight &&
+    pointer.y >= plotRect.top &&
+    pointer.y <= plotBottom
+      ? scales.toX(scales.toIndex(pointer.x))
+      : null
+
+  for (let index = 0; index < verticalLineCount; index += 1) {
+    const ratio = index / (verticalLineCount - 1)
+    const candleIndex = Math.round(ratio * (candles.length - 1))
+    const candle = candles[candleIndex]
+
+    if (!candle) {
+      continue
+    }
+
+    const rawX = plotRect.left + ratio * plotRect.width
+    if (
+      hoveredCandleX !== null &&
+      Math.abs(rawX - hoveredCandleX) < 75
+    ) {
+      continue
+    }
+
+    const labelX = Math.min(
+      plotRect.left + plotRect.width - 30,
+      Math.max(plotRect.left + 30, rawX),
+    )
+    context.fillText(
+      timeFormatter.format(candle.timestamp),
+      labelX,
+      plotRect.top + plotRect.height + 8,
     )
   }
 

@@ -37,4 +37,26 @@ describe('createChartScales', () => {
     expect(scales.toY(100)).toBe(70)
     expect(scales.toY(90)).toBe(120)
   })
+
+  it('maps plot Y positions back to prices', () => {
+    const scales = createChartScales(input)
+
+    expect(scales.toPrice(20)).toBe(110)
+    expect(scales.toPrice(70)).toBe(100)
+    expect(scales.toPrice(120)).toBe(90)
+  })
+
+  it('maps X positions to the nearest candle index', () => {
+    const scales = createChartScales(input)
+
+    expect(scales.toIndex(35)).toBe(0)
+    expect(scales.toIndex(185)).toBe(3)
+  })
+
+  it('clamps X positions outside the plot to a valid candle index', () => {
+    const scales = createChartScales(input)
+
+    expect(scales.toIndex(-100)).toBe(0)
+    expect(scales.toIndex(900)).toBe(3)
+  })
 })

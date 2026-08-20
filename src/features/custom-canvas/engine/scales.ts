@@ -16,9 +16,23 @@ export function createChartScales(
     return plotRect.top + priceRatio * plotRect.height
   }
 
+  const toPrice = (y: number) => {
+    const priceRatio = (y - plotRect.top) / plotRect.height
+    return priceRange.max - priceRatio * priceSpan
+  }
+
+  const toIndex = (x: number) => {
+    const rawIndex = Math.round(
+      (x - plotRect.left) / candleStep - 0.5,
+    )
+    return Math.min(candleCount - 1, Math.max(0, rawIndex))
+  }
+
   return {
     toX,
     toY,
+    toPrice,
+    toIndex,
     candleStep,
     candleBodyWidth,
   }

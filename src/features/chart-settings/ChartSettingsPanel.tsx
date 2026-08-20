@@ -1,31 +1,35 @@
 import {
   CANDLE_INTERVAL_OPTIONS,
   TICK_INTERVAL_OPTIONS,
+  VOLATILITY_OPTIONS,
   WINDOW_OPTIONS,
 } from './chartSettings'
+import type { VolatilityMode } from '../../domain/market/volatility'
 
 interface ChartSettingsPanelProps {
   candleIntervalMs: number
   tickIntervalMs: number
   windowMs: number
+  volatilityMode: VolatilityMode
   onCandleIntervalChange: (value: number) => void
   onTickIntervalChange: (value: number) => void
   onWindowChange: (value: number) => void
+  onVolatilityModeChange: (value: VolatilityMode) => void
 }
 
-interface SettingGroupProps {
+interface SettingGroupProps<T extends string | number> {
   label: string
-  value: number
-  options: readonly { label: string; value: number }[]
-  onChange: (value: number) => void
+  value: T
+  options: readonly { label: string; value: T }[]
+  onChange: (value: T) => void
 }
 
-function SettingGroup({
+function SettingGroup<T extends string | number>({
   label,
   value,
   options,
   onChange,
-}: SettingGroupProps) {
+}: SettingGroupProps<T>) {
   return (
     <fieldset className="setting-group">
       <legend>{label}</legend>
@@ -54,9 +58,11 @@ export function ChartSettingsPanel({
   candleIntervalMs,
   tickIntervalMs,
   windowMs,
+  volatilityMode,
   onCandleIntervalChange,
   onTickIntervalChange,
   onWindowChange,
+  onVolatilityModeChange,
 }: ChartSettingsPanelProps) {
   return (
     <section className="chart-settings" aria-label="图表参数">
@@ -83,6 +89,12 @@ export function ChartSettingsPanel({
           value={windowMs}
           options={WINDOW_OPTIONS}
           onChange={onWindowChange}
+        />
+        <SettingGroup
+          label="波动档位"
+          value={volatilityMode}
+          options={VOLATILITY_OPTIONS}
+          onChange={onVolatilityModeChange}
         />
       </div>
     </section>

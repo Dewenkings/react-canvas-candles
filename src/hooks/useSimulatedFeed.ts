@@ -2,6 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { generateCandles } from '../domain/candles/generateCandles'
 import { updateCandle } from '../domain/candles/updateCandle'
 import type { Candle, PriceTick } from '../domain/candles/types'
+import {
+  calculatePriceChangeRatio,
+  type VolatilityMode,
+} from '../domain/market/volatility'
 
 export interface SimulatedFeedOptions {
   initialCount: number
@@ -11,6 +15,7 @@ export interface SimulatedFeedOptions {
   tickIntervalMs: number
   simulatedTickStepMs: number
   seed: number
+  volatilityMode: VolatilityMode
 }
 
 export interface SimulatedFeed {
@@ -32,6 +37,7 @@ export function useSimulatedFeed(
     tickIntervalMs,
     simulatedTickStepMs,
     seed,
+    volatilityMode,
   } = options
   const [candles, setCandles] = useState<Candle[]>(() =>
     generateCandles({
@@ -61,18 +67,23 @@ export function useSimulatedFeed(
           return previousCandles
         }
 
-        randomStateRef.current =
-          (Math.imul(randomStateRef.current, 1_664_525) + 1_013_904_223) >>> 0
-        const priceRandom = randomStateRef.current / 4_294_967_296
-        randomStateRef.current =
-          (Math.imul(randomStateRef.current, 1_664_525) + 1_013_904_223) >>> 0
-        const volumeRandom = randomStateRef.current / 4_294_967_296
+        const nextRandom = () => {
+          randomStateRef.current =
+            (Math.imul(randomStateRef.current, 1_664_525) + 1_013_904_223) >>>
+            0
+          return randomStateRef.current / 4_294_967_296
+        }
+        const directionRandom = nextRandom()
+        const spikeRandom = nextRandom()
+        const volumeRandom = nextRandom()
+        const changeRatio = calculatePriceChangeRatio(
+          volatilityMode,
+          directionRandom,
+          spikeRandom,
+        )
         const tick: PriceTick = {
           timestamp: simulatedTimeRef.current,
-          price: Math.max(
-            0.01,
-            lastCandle.close * (1 + (priceRandom - 0.5) * 0.004),
-          ),
+          price: Math.max(0.01, lastCandle.close * (1 + changeRatio)),
           volume: Math.max(1, Math.floor(volumeRandom * 20)),
         }
 
@@ -88,6 +99,7 @@ export function useSimulatedFeed(
     isRunning,
     simulatedTickStepMs,
     tickIntervalMs,
+    volatilityMode,
   ])
 
   const start = useCallback(() => {

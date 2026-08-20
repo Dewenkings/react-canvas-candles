@@ -30,4 +30,15 @@ export const WINDOW_OPTIONS = [
   { label: '5m', value: 300_000 },
 ] as const
 
+export const VOLATILITY_OPTIONS: readonly {
+  label: string
+  value: VolatilityMode
+}[] = [
+  { label: 'Calm', value: 'calm' },
+  { label: 'Normal', value: 'normal' },
+  { label: 'Spiky', value: 'spiky' },
+  { label: 'Chaos', value: 'chaos' },
+]
+
 export const MAX_WINDOW_MS = WINDOW_OPTIONS.at(-1)?.value ?? 300_000
+import type { VolatilityMode } from '../../domain/market/volatility'

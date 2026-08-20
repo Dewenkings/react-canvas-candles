@@ -1,9 +1,11 @@
 import type { Candle } from '../../../domain/candles/types'
 import { drawCandles } from './drawCandles'
+import { drawCrosshair } from './drawCrosshair'
 import { drawGrid } from './drawGrid'
+import { drawLatestPrice } from './drawLatestPrice'
 import { calculatePriceRange } from './priceRange'
 import { createChartScales } from './scales'
-import type { PlotRect } from './types'
+import type { PlotRect, PointerState } from './types'
 import { getVisibleCandles } from './visibleCandles'
 
 const INSETS = {
@@ -17,6 +19,7 @@ export interface DrawFrameInput {
   context: CanvasRenderingContext2D
   candles: readonly Candle[]
   visibleCount: number
+  pointer: PointerState
   width: number
   height: number
 }
@@ -25,6 +28,7 @@ export function drawFrame({
   context,
   candles,
   visibleCount,
+  pointer,
   width,
   height,
 }: DrawFrameInput): void {
@@ -61,6 +65,26 @@ export function drawFrame({
     plotRect,
   })
 
-  drawGrid({ context, plotRect, priceRange, scales })
+  drawGrid({
+    context,
+    plotRect,
+    priceRange,
+    scales,
+    candles: visibleCandles,
+    pointer,
+  })
   drawCandles({ context, candles: visibleCandles, scales })
+  drawLatestPrice({
+    context,
+    candles: visibleCandles,
+    plotRect,
+    scales,
+  })
+  drawCrosshair({
+    context,
+    candles: visibleCandles,
+    plotRect,
+    scales,
+    pointer,
+  })
 }

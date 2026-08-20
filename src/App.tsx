@@ -6,6 +6,7 @@ import {
   MAX_WINDOW_MS,
 } from './features/chart-settings/chartSettings'
 import { CustomCanvasChart } from './features/custom-canvas/CustomCanvasChart'
+import type { VolatilityMode } from './domain/market/volatility'
 import './App.css'
 
 const FEED_ANCHOR_TIMESTAMP = Date.now()
@@ -29,12 +30,14 @@ interface CandleWorkspaceProps {
   candleIntervalMs: number
   tickIntervalMs: number
   windowMs: number
+  volatilityMode: VolatilityMode
 }
 
 function CandleWorkspace({
   candleIntervalMs,
   tickIntervalMs,
   windowMs,
+  volatilityMode,
 }: CandleWorkspaceProps) {
   const endTimestamp =
     Math.floor(FEED_ANCHOR_TIMESTAMP / candleIntervalMs) * candleIntervalMs
@@ -52,6 +55,7 @@ function CandleWorkspace({
       tickIntervalMs,
       simulatedTickStepMs: tickIntervalMs,
       seed: FEED_SEED,
+      volatilityMode,
     })
   const latestCandle = candles.at(-1)
 
@@ -142,6 +146,8 @@ function App() {
     DEFAULT_TICK_INTERVAL_MS,
   )
   const [windowMs, setWindowMs] = useState(DEFAULT_WINDOW_MS)
+  const [volatilityMode, setVolatilityMode] =
+    useState<VolatilityMode>('normal')
 
   return (
     <main className="app-shell">
@@ -157,9 +163,11 @@ function App() {
         candleIntervalMs={candleIntervalMs}
         tickIntervalMs={tickIntervalMs}
         windowMs={windowMs}
+        volatilityMode={volatilityMode}
         onCandleIntervalChange={setCandleIntervalMs}
         onTickIntervalChange={setTickIntervalMs}
         onWindowChange={setWindowMs}
+        onVolatilityModeChange={setVolatilityMode}
       />
 
       <CandleWorkspace
@@ -167,6 +175,7 @@ function App() {
         candleIntervalMs={candleIntervalMs}
         tickIntervalMs={tickIntervalMs}
         windowMs={windowMs}
+        volatilityMode={volatilityMode}
       />
     </main>
   )
