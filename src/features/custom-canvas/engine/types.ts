@@ -30,3 +30,11 @@ export interface CreateChartScalesInput {
   priceRange: PriceRange
   plotRect: PlotRect
 }
+
+export interface ChartFrameModel {
+  visibleCandles: readonly Candle[]
+  priceRange: PriceRange
+  plotRect: PlotRect
+  scales: ChartScales
+}
+import type { Candle } from '../../../domain/candles/types'

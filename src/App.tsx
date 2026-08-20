@@ -126,11 +126,11 @@ function CandleWorkspace({
           <div>
             <h2 id="custom-chart-title">Custom Canvas</h2>
             <p>
-              最近 {Math.min(visibleCount, candles.length)} 根 · 单 Canvas · 持续
-              rAF
+              最近 {Math.min(visibleCount, candles.length)} 根 · 双 Canvas ·
+              按需绘制
             </p>
           </div>
-          <span className="learning-badge">BASELINE ENGINE</span>
+          <span className="learning-badge">DUAL CANVAS</span>
         </div>
         <CustomCanvasChart candles={candles} visibleCount={visibleCount} />
       </section>

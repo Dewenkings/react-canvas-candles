@@ -65,6 +65,8 @@ export function drawCrosshair({
   context.stroke()
   context.setLineDash([])
 
+  context.fillStyle = '#111827'
+  context.fillRect(plotRect.left, plotBottom, plotRect.width, 24)
   context.fillStyle = '#cbd5e1'
   context.fillRect(
     plotRight,

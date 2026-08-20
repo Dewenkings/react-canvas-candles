@@ -2,7 +2,6 @@ import type { Candle } from '../../../domain/candles/types'
 import type {
   ChartScales,
   PlotRect,
-  PointerState,
   PriceRange,
 } from './types'
 
@@ -19,11 +18,10 @@ export interface DrawGridInput {
   priceRange: PriceRange
   scales: ChartScales
   candles: readonly Candle[]
-  pointer: PointerState
 }
 
 export function drawGrid(input: DrawGridInput): void {
-  const { context, plotRect, priceRange, scales, candles, pointer } = input
+  const { context, plotRect, priceRange, scales, candles } = input
   const horizontalLineCount = 5
   const verticalLineCount = 6
 
@@ -67,17 +65,6 @@ export function drawGrid(input: DrawGridInput): void {
   context.textAlign = 'center'
   context.textBaseline = 'top'
 
-  const plotRight = plotRect.left + plotRect.width
-  const plotBottom = plotRect.top + plotRect.height
-  const hoveredCandleX =
-    pointer.isInside &&
-    pointer.x >= plotRect.left &&
-    pointer.x <= plotRight &&
-    pointer.y >= plotRect.top &&
-    pointer.y <= plotBottom
-      ? scales.toX(scales.toIndex(pointer.x))
-      : null
-
   for (let index = 0; index < verticalLineCount; index += 1) {
     const ratio = index / (verticalLineCount - 1)
     const candleIndex = Math.round(ratio * (candles.length - 1))
@@ -88,13 +75,6 @@ export function drawGrid(input: DrawGridInput): void {
     }
 
     const rawX = plotRect.left + ratio * plotRect.width
-    if (
-      hoveredCandleX !== null &&
-      Math.abs(rawX - hoveredCandleX) < 75
-    ) {
-      continue
-    }
-
     const labelX = Math.min(
       plotRect.left + plotRect.width - 30,
       Math.max(plotRect.left + 30, rawX),
