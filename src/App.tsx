@@ -6,6 +6,7 @@ import {
   MAX_WINDOW_MS,
 } from './features/chart-settings/chartSettings'
 import { CustomCanvasChart } from './features/custom-canvas/CustomCanvasChart'
+import { EChartsPanel } from './features/echarts/EChartsPanel'
 import { KLineChartPanel } from './features/kline-chart/KLineChartPanel'
 import { LightweightChart } from './features/lightweight-charts/LightweightChart'
 import type { VolatilityMode } from './domain/market/volatility'
@@ -171,6 +172,23 @@ function CandleWorkspace({
           candles={candles}
           visibleCount={visibleCount}
           candleIntervalMs={candleIntervalMs}
+        />
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="echarts-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="echarts-title">ECharts</h2>
+            <p>setOption 配置更新 · K 线与成交量双 Grid · DataZoom</p>
+          </div>
+          <span className="learning-badge">GENERAL VISUALIZATION</span>
+        </div>
+        <EChartsPanel
+          candles={candles}
+          visibleCount={visibleCount}
         />
       </section>
     </>
