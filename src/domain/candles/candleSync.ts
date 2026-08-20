@@ -1,4 +1,4 @@
-import type { Candle } from '../../domain/candles/types'
+import type { Candle } from './types'
 
 export type CandleSyncMode = 'none' | 'replace' | 'update'
 

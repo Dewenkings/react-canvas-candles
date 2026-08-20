@@ -6,6 +6,7 @@ import {
   MAX_WINDOW_MS,
 } from './features/chart-settings/chartSettings'
 import { CustomCanvasChart } from './features/custom-canvas/CustomCanvasChart'
+import { KLineChartPanel } from './features/kline-chart/KLineChartPanel'
 import { LightweightChart } from './features/lightweight-charts/LightweightChart'
 import type { VolatilityMode } from './domain/market/volatility'
 import './App.css'
@@ -152,6 +153,24 @@ function CandleWorkspace({
         <LightweightChart
           candles={candles}
           visibleCount={visibleCount}
+        />
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="kline-chart-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="kline-chart-title">KLineChart</h2>
+            <p>DataLoader · MA 覆盖层 · VOL pane · 完整 K 线交互</p>
+          </div>
+          <span className="learning-badge">TRADING TERMINAL</span>
+        </div>
+        <KLineChartPanel
+          candles={candles}
+          visibleCount={visibleCount}
+          candleIntervalMs={candleIntervalMs}
         />
       </section>
     </>

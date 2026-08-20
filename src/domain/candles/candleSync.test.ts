@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Candle } from '../../domain/candles/types'
+import type { Candle } from './types'
 import { getCandleSyncMode } from './candleSync'
 
 const first: Candle = {
@@ -48,12 +48,7 @@ describe('getCandleSyncMode', () => {
   })
 
   it('updates when exactly one new final Candle is appended', () => {
-    expect(
-      getCandleSyncMode(
-        [first],
-        [first, second],
-      ),
-    ).toBe('update')
+    expect(getCandleSyncMode([first], [first, second])).toBe('update')
   })
 
   it('replaces when a reset shrinks the array', () => {

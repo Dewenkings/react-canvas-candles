@@ -11,12 +11,12 @@ import type {
   ISeriesApi,
 } from 'lightweight-charts'
 import type { Candle } from '../../domain/candles/types'
+import { getCandleSyncMode } from '../../domain/candles/candleSync'
 import {
   createVisibleLogicalRange,
   toLightweightCandle,
   toLightweightCandles,
 } from './candleAdapter'
-import { getCandleSyncMode } from './candleSync'
 import { createChartTimeFormatter } from './chartTime'
 
 export function useLightweightChart(
