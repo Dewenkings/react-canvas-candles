@@ -67,14 +67,14 @@ export function drawGrid(input: DrawGridInput): void {
 
   for (let index = 0; index < verticalLineCount; index += 1) {
     const ratio = index / (verticalLineCount - 1)
-    const candleIndex = Math.round(ratio * (candles.length - 1))
+    const rawX = plotRect.left + ratio * plotRect.width
+    const candleIndex = scales.toIndex(rawX)
     const candle = candles[candleIndex]
 
     if (!candle) {
       continue
     }
 
-    const rawX = plotRect.left + ratio * plotRect.width
     const labelX = Math.min(
       plotRect.left + plotRect.width - 30,
       Math.max(plotRect.left + 30, rawX),

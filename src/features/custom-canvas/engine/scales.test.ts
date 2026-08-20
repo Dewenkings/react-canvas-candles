@@ -59,4 +59,16 @@ describe('createChartScales', () => {
     expect(scales.toIndex(-100)).toBe(0)
     expect(scales.toIndex(900)).toBe(3)
   })
+
+  it('uses viewport-provided candle spacing and first-candle position', () => {
+    const scales = createChartScales({
+      ...input,
+      candleStep: 100,
+      firstCandleX: 30,
+    })
+
+    expect(scales.toX(0)).toBe(30)
+    expect(scales.toX(1)).toBe(130)
+    expect(scales.toIndex(125)).toBe(1)
+  })
 })

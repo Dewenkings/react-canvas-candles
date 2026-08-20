@@ -1,3 +1,5 @@
+import type { Candle } from '../../../domain/candles/types'
+
 export interface PriceRange {
   min: number
   max: number
@@ -29,12 +31,14 @@ export interface CreateChartScalesInput {
   candleCount: number
   priceRange: PriceRange
   plotRect: PlotRect
+  candleStep?: number
+  firstCandleX?: number
 }
 
 export interface ChartFrameModel {
   visibleCandles: readonly Candle[]
+  latestVisibleCandle: Candle | null
   priceRange: PriceRange
   plotRect: PlotRect
   scales: ChartScales
 }
-import type { Candle } from '../../../domain/candles/types'

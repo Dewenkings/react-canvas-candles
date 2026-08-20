@@ -49,7 +49,7 @@ function CandleWorkspace({
     candleIntervalMs,
   )
   const visibleCount = getCandleCountForDuration(windowMs, candleIntervalMs)
-  const { candles, isRunning, start, pause, reset } =
+  const { candles, isRunning, resetVersion, start, pause, reset } =
     useSimulatedFeed({
       initialCount,
       endTimestamp,
@@ -129,13 +129,17 @@ function CandleWorkspace({
           <div>
             <h2 id="custom-chart-title">Custom Canvas</h2>
             <p>
-              最近 {Math.min(visibleCount, candles.length)} 根 · 双 Canvas ·
-              按需绘制
+              默认窗口 {Math.min(visibleCount, candles.length)} 根 · 双 Canvas
+              · 按需绘制
             </p>
           </div>
           <span className="learning-badge">DUAL CANVAS</span>
         </div>
-        <CustomCanvasChart candles={candles} visibleCount={visibleCount} />
+        <CustomCanvasChart
+          candles={candles}
+          visibleCount={visibleCount}
+          resetVersion={resetVersion}
+        />
       </section>
 
       <section

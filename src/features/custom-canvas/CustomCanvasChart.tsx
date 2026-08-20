@@ -6,11 +6,13 @@ import './customCanvas.css'
 export interface CustomCanvasChartProps {
   candles: readonly Candle[]
   visibleCount: number
+  resetVersion: number
 }
 
 export function CustomCanvasChart({
   candles,
   visibleCount,
+  resetVersion,
 }: CustomCanvasChartProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const baseCanvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -22,14 +24,15 @@ export function CustomCanvasChart({
     overlayCanvasRef,
     candles,
     visibleCount,
+    resetVersion,
   )
 
   return (
     <div
       ref={containerRef}
       className="custom-canvas-frame"
-      role="img"
-      aria-label="Custom candlestick chart learning canvas"
+      role="region"
+      aria-label="可缩放的自定义实时 K 线图"
     >
       <canvas
         ref={baseCanvasRef}
@@ -42,7 +45,8 @@ export function CustomCanvasChart({
         aria-hidden="true"
       />
       <span className="chart-canvas-description">
-        可交互的实时 K 线图，包含价格轴、时间轴和十字线。
+        可交互的实时 K 线图。滚轮缩放，按住鼠标水平拖动查看历史，
+        双击返回最新数据；包含价格轴、时间轴和十字线。
       </span>
     </div>
   )

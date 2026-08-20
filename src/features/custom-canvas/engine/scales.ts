@@ -4,12 +4,13 @@ export function createChartScales(
   input: CreateChartScalesInput,
 ): ChartScales {
   const { candleCount, priceRange, plotRect } = input
-  const candleStep = plotRect.width / candleCount
+  const candleStep = input.candleStep ?? plotRect.width / candleCount
+  const firstCandleX =
+    input.firstCandleX ?? plotRect.left + candleStep / 2
   const candleBodyWidth = Math.max(1, candleStep * 0.65)
   const priceSpan = priceRange.max - priceRange.min
 
-  const toX = (index: number) =>
-    plotRect.left + (index + 0.5) * candleStep
+  const toX = (index: number) => firstCandleX + index * candleStep
 
   const toY = (price: number) => {
     const priceRatio = (priceRange.max - price) / priceSpan
@@ -22,9 +23,7 @@ export function createChartScales(
   }
 
   const toIndex = (x: number) => {
-    const rawIndex = Math.round(
-      (x - plotRect.left) / candleStep - 0.5,
-    )
+    const rawIndex = Math.round((x - firstCandleX) / candleStep)
     return Math.min(candleCount - 1, Math.max(0, rawIndex))
   }
 

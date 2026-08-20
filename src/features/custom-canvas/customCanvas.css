@@ -60,6 +60,10 @@
   touch-action: none;
 }
 
+.custom-canvas-overlay.is-dragging {
+  cursor: grabbing;
+}
+
 .chart-canvas-description {
   position: absolute;
   overflow: hidden;
