@@ -13,8 +13,16 @@ export interface PlotRect {
 export interface ChartScales {
   toX: (index: number) => number
   toY: (price: number) => number
+  toPrice: (y: number) => number
+  toIndex: (x: number) => number
   candleStep: number
   candleBodyWidth: number
+}
+
+export interface PointerState {
+  x: number
+  y: number
+  isInside: boolean
 }
 
 export interface CreateChartScalesInput {
@@ -22,3 +30,11 @@ export interface CreateChartScalesInput {
   priceRange: PriceRange
   plotRect: PlotRect
 }
+
+export interface ChartFrameModel {
+  visibleCandles: readonly Candle[]
+  priceRange: PriceRange
+  plotRect: PlotRect
+  scales: ChartScales
+}
+import type { Candle } from '../../../domain/candles/types'

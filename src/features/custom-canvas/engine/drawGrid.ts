@@ -1,14 +1,27 @@
-import type { ChartScales, PlotRect, PriceRange } from './types'
+import type { Candle } from '../../../domain/candles/types'
+import type {
+  ChartScales,
+  PlotRect,
+  PriceRange,
+} from './types'
+
+const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+})
 
 export interface DrawGridInput {
   context: CanvasRenderingContext2D
   plotRect: PlotRect
   priceRange: PriceRange
   scales: ChartScales
+  candles: readonly Candle[]
 }
 
 export function drawGrid(input: DrawGridInput): void {
-  const { context, plotRect, priceRange, scales } = input
+  const { context, plotRect, priceRange, scales, candles } = input
   const horizontalLineCount = 5
   const verticalLineCount = 6
 
@@ -46,6 +59,30 @@ export function drawGrid(input: DrawGridInput): void {
       price.toFixed(2),
       plotRect.left + plotRect.width + 8,
       y,
+    )
+  }
+
+  context.textAlign = 'center'
+  context.textBaseline = 'top'
+
+  for (let index = 0; index < verticalLineCount; index += 1) {
+    const ratio = index / (verticalLineCount - 1)
+    const candleIndex = Math.round(ratio * (candles.length - 1))
+    const candle = candles[candleIndex]
+
+    if (!candle) {
+      continue
+    }
+
+    const rawX = plotRect.left + ratio * plotRect.width
+    const labelX = Math.min(
+      plotRect.left + plotRect.width - 30,
+      Math.max(plotRect.left + 30, rawX),
+    )
+    context.fillText(
+      timeFormatter.format(candle.timestamp),
+      labelX,
+      plotRect.top + plotRect.height + 8,
     )
   }
 
