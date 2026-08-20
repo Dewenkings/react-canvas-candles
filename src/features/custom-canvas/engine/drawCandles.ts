@@ -1,16 +1,25 @@
 import type { Candle } from '../../../domain/candles/types'
-import type { ChartScales } from './types'
+import type { ChartScales, PlotRect } from './types'
 
 export interface DrawCandlesInput {
   context: CanvasRenderingContext2D
   candles: readonly Candle[]
+  plotRect: PlotRect
   scales: ChartScales
 }
 
 export function drawCandles(input: DrawCandlesInput): void {
-  const { context, candles, scales } = input
+  const { context, candles, plotRect, scales } = input
 
   context.save()
+  context.beginPath()
+  context.rect(
+    plotRect.left,
+    plotRect.top,
+    plotRect.width,
+    plotRect.height,
+  )
+  context.clip()
   context.lineWidth = 1
 
   candles.forEach((candle, index) => {

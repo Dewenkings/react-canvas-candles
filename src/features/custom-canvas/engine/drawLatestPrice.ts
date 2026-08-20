@@ -3,19 +3,17 @@ import type { ChartScales, PlotRect } from './types'
 
 export interface DrawLatestPriceInput {
   context: CanvasRenderingContext2D
-  candles: readonly Candle[]
+  latest: Candle | null
   plotRect: PlotRect
   scales: ChartScales
 }
 
 export function drawLatestPrice({
   context,
-  candles,
+  latest,
   plotRect,
   scales,
 }: DrawLatestPriceInput): void {
-  const latest = candles.at(-1)
-
   if (!latest) {
     return
   }

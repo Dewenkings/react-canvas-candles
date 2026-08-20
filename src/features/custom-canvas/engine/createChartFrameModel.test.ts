@@ -33,12 +33,13 @@ describe('createChartFrameModel', () => {
   it('assembles visible data, plot geometry, range, and scales', () => {
     const model = createChartFrameModel({
       candles,
-      visibleCount: 2,
+      timeScale: { barSpacing: 362, rightOffset: 0.5 },
       width: 800,
       height: 420,
     })
 
     expect(model?.visibleCandles).toEqual(candles.slice(-2))
+    expect(model?.latestVisibleCandle).toBe(candles.at(-1))
     expect(model?.plotRect).toEqual({
       left: 12,
       top: 20,
@@ -54,7 +55,7 @@ describe('createChartFrameModel', () => {
     expect(
       createChartFrameModel({
         candles: [],
-        visibleCount: 10,
+        timeScale: { barSpacing: 80, rightOffset: 0.5 },
         width: 800,
         height: 420,
       }),
@@ -65,10 +66,38 @@ describe('createChartFrameModel', () => {
     expect(
       createChartFrameModel({
         candles,
-        visibleCount: 3,
+        timeScale: { barSpacing: 20, rightOffset: 0.5 },
         width: 70,
         height: 420,
       }),
     ).toBeNull()
+  })
+
+  it('builds the visible slice and fixed X spacing from a historical viewport', () => {
+    const historicalCandles: Candle[] = Array.from(
+      { length: 10 },
+      (_, index) => ({
+        timestamp: (index + 1) * 1_000,
+        open: 100 + index,
+        high: 102 + index,
+        low: 99 + index,
+        close: 101 + index,
+        volume: 10,
+      }),
+    )
+
+    const model = createChartFrameModel({
+      candles: historicalCandles,
+      timeScale: { barSpacing: 100, rightOffset: -2 },
+      width: 800,
+      height: 420,
+    })
+
+    expect(model?.visibleCandles).toEqual(
+      historicalCandles.slice(0, 8),
+    )
+    expect(model?.latestVisibleCandle).toBeNull()
+    expect(model?.scales.candleStep).toBe(100)
+    expect(model!.scales.toX(1) - model!.scales.toX(0)).toBe(100)
   })
 })

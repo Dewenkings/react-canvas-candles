@@ -124,16 +124,16 @@ export function createEChartsOption(
     },
     grid: [
       {
-        left: 64,
-        right: 72,
-        top: 36,
-        height: 300,
+        left: 48,
+        right: 58,
+        top: '7%',
+        height: '58%',
       },
       {
-        left: 64,
-        right: 72,
-        top: 370,
-        height: 72,
+        left: 48,
+        right: 58,
+        top: '69%',
+        height: '15%',
       },
     ],
     xAxis: [
@@ -199,7 +199,7 @@ export function createEChartsOption(
         startValue: zoomRange.startValue,
         endValue: zoomRange.endValue,
         bottom: 4,
-        height: 22,
+        height: 18,
         borderColor: '#334155',
         backgroundColor: '#0f172a',
         fillerColor: 'rgba(56, 189, 248, 0.16)',

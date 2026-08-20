@@ -49,7 +49,7 @@ function CandleWorkspace({
     candleIntervalMs,
   )
   const visibleCount = getCandleCountForDuration(windowMs, candleIntervalMs)
-  const { candles, isRunning, start, pause, reset } =
+  const { candles, isRunning, resetVersion, start, pause, reset } =
     useSimulatedFeed({
       initialCount,
       endTimestamp,
@@ -67,31 +67,37 @@ function CandleWorkspace({
       <section className="feed-panel" aria-labelledby="feed-title">
         <div className="panel-heading">
           <div>
+            <p className="panel-label">SHARED MARKET FEED</p>
             <h2 id="feed-title">模拟行情</h2>
             <p>
               {candles.length} 根历史 K 线 · {candleIntervalMs / 1_000} 秒周期
             </p>
           </div>
-          <span className={`status ${isRunning ? 'running' : ''}`}>
-            {isRunning ? '运行中' : '已暂停'}
-          </span>
-        </div>
-
-        <div className="controls" aria-label="行情控制">
-          <button type="button" onClick={start} disabled={isRunning}>
-            开始
-          </button>
-          <button type="button" onClick={pause} disabled={!isRunning}>
-            暂停
-          </button>
-          <button type="button" className="secondary" onClick={reset}>
-            重置
-          </button>
+          <div className="feed-actions">
+            <span
+              className={`status ${isRunning ? 'running' : ''}`}
+              role="status"
+              aria-live="polite"
+            >
+              {isRunning ? '运行中' : '已暂停'}
+            </span>
+            <div className="controls" aria-label="行情控制">
+              <button type="button" onClick={start} disabled={isRunning}>
+                开始
+              </button>
+              <button type="button" onClick={pause} disabled={!isRunning}>
+                暂停
+              </button>
+              <button type="button" className="secondary" onClick={reset}>
+                重置
+              </button>
+            </div>
+          </div>
         </div>
 
         {latestCandle ? (
           <dl className="ohlc-grid">
-            <div className="timestamp-row">
+            <div className="timestamp-row market-time">
               <dt>当前周期</dt>
               <dd>{dateTimeFormatter.format(latestCandle.timestamp)}</dd>
             </div>
@@ -121,75 +127,83 @@ function CandleWorkspace({
         )}
       </section>
 
-      <section
-        className="custom-chart-panel"
-        aria-labelledby="custom-chart-title"
-      >
-        <div className="custom-chart-heading">
-          <div>
-            <h2 id="custom-chart-title">Custom Canvas</h2>
-            <p>
-              最近 {Math.min(visibleCount, candles.length)} 根 · 双 Canvas ·
-              按需绘制
-            </p>
+      <section className="comparison-grid" aria-label="K 线渲染方案对比">
+        <section
+          className="custom-chart-panel chart-card--custom"
+          aria-labelledby="custom-chart-title"
+        >
+          <div className="custom-chart-heading">
+            <div>
+              <span className="chart-index">01 · FROM SCRATCH</span>
+              <h2 id="custom-chart-title">Custom Canvas</h2>
+              <p>
+                默认窗口 {Math.min(visibleCount, candles.length)} bars · 双
+                Canvas · 按需绘制
+              </p>
+            </div>
+            <span className="learning-badge">ENGINE</span>
           </div>
-          <span className="learning-badge">DUAL CANVAS</span>
-        </div>
-        <CustomCanvasChart candles={candles} visibleCount={visibleCount} />
-      </section>
+          <CustomCanvasChart
+            candles={candles}
+            visibleCount={visibleCount}
+            resetVersion={resetVersion}
+          />
+        </section>
 
-      <section
-        className="custom-chart-panel"
-        aria-labelledby="lightweight-chart-title"
-      >
-        <div className="custom-chart-heading">
-          <div>
-            <h2 id="lightweight-chart-title">Lightweight Charts</h2>
-            <p>
-              setData 初始化 · update 增量更新 · 库内置坐标轴与十字线
-            </p>
+        <section
+          className="custom-chart-panel chart-card--lightweight"
+          aria-labelledby="lightweight-chart-title"
+        >
+          <div className="custom-chart-heading">
+            <div>
+              <span className="chart-index">02 · FINANCIAL CORE</span>
+              <h2 id="lightweight-chart-title">Lightweight Charts</h2>
+              <p>series.update · 金融坐标轴 · 内置十字线</p>
+            </div>
+            <span className="learning-badge">LEAN</span>
           </div>
-          <span className="learning-badge">MATURE LIBRARY</span>
-        </div>
-        <LightweightChart
-          candles={candles}
-          visibleCount={visibleCount}
-        />
-      </section>
+          <LightweightChart
+            candles={candles}
+            visibleCount={visibleCount}
+          />
+        </section>
 
-      <section
-        className="custom-chart-panel"
-        aria-labelledby="kline-chart-title"
-      >
-        <div className="custom-chart-heading">
-          <div>
-            <h2 id="kline-chart-title">KLineChart</h2>
-            <p>DataLoader · MA 覆盖层 · VOL pane · 完整 K 线交互</p>
+        <section
+          className="custom-chart-panel chart-card--kline"
+          aria-labelledby="kline-chart-title"
+        >
+          <div className="custom-chart-heading">
+            <div>
+              <span className="chart-index">03 · TRADING TOOLKIT</span>
+              <h2 id="kline-chart-title">KLineChart</h2>
+              <p>DataLoader · MA 覆盖层 · VOL pane</p>
+            </div>
+            <span className="learning-badge">TERMINAL</span>
           </div>
-          <span className="learning-badge">TRADING TERMINAL</span>
-        </div>
-        <KLineChartPanel
-          candles={candles}
-          visibleCount={visibleCount}
-          candleIntervalMs={candleIntervalMs}
-        />
-      </section>
+          <KLineChartPanel
+            candles={candles}
+            visibleCount={visibleCount}
+            candleIntervalMs={candleIntervalMs}
+          />
+        </section>
 
-      <section
-        className="custom-chart-panel"
-        aria-labelledby="echarts-title"
-      >
-        <div className="custom-chart-heading">
-          <div>
-            <h2 id="echarts-title">ECharts</h2>
-            <p>setOption 配置更新 · K 线与成交量双 Grid · DataZoom</p>
+        <section
+          className="custom-chart-panel chart-card--echarts"
+          aria-labelledby="echarts-title"
+        >
+          <div className="custom-chart-heading">
+            <div>
+              <span className="chart-index">04 · GENERAL VISUALIZATION</span>
+              <h2 id="echarts-title">ECharts</h2>
+              <p>setOption · K 线与成交量双 Grid · DataZoom</p>
+            </div>
+            <span className="learning-badge">CONFIG</span>
           </div>
-          <span className="learning-badge">GENERAL VISUALIZATION</span>
-        </div>
-        <EChartsPanel
-          candles={candles}
-          visibleCount={visibleCount}
-        />
+          <EChartsPanel
+            candles={candles}
+            visibleCount={visibleCount}
+          />
+        </section>
       </section>
     </>
   )
@@ -209,11 +223,22 @@ function App() {
   return (
     <main className="app-shell">
       <header className="page-header">
-        <p className="eyebrow">Phase 2 · Custom Canvas engine</p>
-        <h1>React Canvas Candles</h1>
-        <p>
-          从模拟 OHLC 数据到坐标映射，完整验证 React 与 Canvas 的实时绘制链路。
-        </p>
+        <div className="header-copy">
+          <p className="eyebrow">RENDERING LAB / 04 APPROACHES</p>
+          <h1>
+            React Candlestick
+            <span> Rendering Lab</span>
+          </h1>
+          <p className="page-intro">
+            同一份实时 OHLC 行情，四种 React K 线渲染路径。
+            从零理解像素链路，再对照成熟库的工程边界。
+          </p>
+        </div>
+        <div className="header-manifest" aria-label="实验说明">
+          <span>ONE FEED</span>
+          <span>FOUR RENDERERS</span>
+          <span>FAIR COMPARISON</span>
+        </div>
       </header>
 
       <ChartSettingsPanel

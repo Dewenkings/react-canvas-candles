@@ -29,7 +29,13 @@ export function drawBaseFrame({
     return
   }
 
-  const { visibleCandles, priceRange, plotRect, scales } = model
+  const {
+    visibleCandles,
+    latestVisibleCandle,
+    priceRange,
+    plotRect,
+    scales,
+  } = model
 
   drawGrid({
     context,
@@ -38,10 +44,15 @@ export function drawBaseFrame({
     scales,
     candles: visibleCandles,
   })
-  drawCandles({ context, candles: visibleCandles, scales })
-  drawLatestPrice({
+  drawCandles({
     context,
     candles: visibleCandles,
+    plotRect,
+    scales,
+  })
+  drawLatestPrice({
+    context,
+    latest: latestVisibleCandle,
     plotRect,
     scales,
   })

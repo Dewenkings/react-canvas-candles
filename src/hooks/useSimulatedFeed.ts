@@ -21,6 +21,7 @@ export interface SimulatedFeedOptions {
 export interface SimulatedFeed {
   candles: Candle[]
   isRunning: boolean
+  resetVersion: number
   start: () => void
   pause: () => void
   reset: () => void
@@ -49,6 +50,7 @@ export function useSimulatedFeed(
     }),
   )
   const [isRunning, setIsRunning] = useState(false)
+  const [resetVersion, setResetVersion] = useState(0)
   const simulatedTimeRef = useRef(endTimestamp)
   const randomStateRef = useRef(seed >>> 0)
 
@@ -112,6 +114,7 @@ export function useSimulatedFeed(
 
   const reset = useCallback(() => {
     setIsRunning(false)
+    setResetVersion((version) => version + 1)
     setCandles(
       generateCandles({
         count: initialCount,
@@ -131,5 +134,5 @@ export function useSimulatedFeed(
     startPrice,
   ])
 
-  return { candles, isRunning, start, pause, reset }
+  return { candles, isRunning, resetVersion, start, pause, reset }
 }
