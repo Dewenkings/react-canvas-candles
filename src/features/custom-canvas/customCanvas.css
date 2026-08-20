@@ -1,45 +1,91 @@
 .custom-chart-panel {
-  margin-top: 24px;
-  padding: 28px;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--bg);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.custom-chart-panel::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, var(--card-accent), transparent 62%);
+  content: '';
+}
+
+.custom-chart-panel:hover {
+  border-color: #344256;
+  transform: translateY(-1px);
+}
+
+.chart-card--custom {
+  --card-accent: #63d3bd;
+}
+
+.chart-card--lightweight {
+  --card-accent: #4ca8ff;
+}
+
+.chart-card--kline {
+  --card-accent: #e2b65a;
+}
+
+.chart-card--echarts {
+  --card-accent: #b889ff;
 }
 
 .custom-chart-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 18px;
+  gap: 16px;
+  min-height: 55px;
+  margin-bottom: 12px;
 }
 
 .custom-chart-heading h2 {
-  margin-bottom: 6px;
+  margin: 3px 0 4px;
 }
 
 .custom-chart-heading p {
-  color: var(--text);
+  overflow: hidden;
+  color: #8995a8;
+  font: 500 10px/1.4 var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-index {
+  color: var(--card-accent);
 }
 
 .learning-badge {
   flex: 0 0 auto;
-  padding: 6px 10px;
-  border: 1px solid var(--accent-border);
-  border-radius: 999px;
-  color: var(--accent);
-  background: var(--accent-bg);
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 40%, transparent);
+  border-radius: 4px;
+  color: var(--card-accent);
+  background: color-mix(in srgb, var(--card-accent) 7%, transparent);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 
 .custom-canvas-frame {
   position: relative;
   overflow: hidden;
   width: 100%;
-  height: 420px;
+  height: 340px;
   border: 1px solid #253047;
-  border-radius: 12px;
+  border-radius: 6px;
   background: #111827;
 }
 
@@ -74,13 +120,16 @@
   white-space: nowrap;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 680px) {
   .custom-chart-panel {
-    padding: 20px;
+    padding: 12px;
   }
 
   .custom-chart-heading {
-    flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+  }
+
+  .custom-chart-heading p {
+    white-space: normal;
   }
 }

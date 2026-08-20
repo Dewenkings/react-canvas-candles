@@ -63,6 +63,15 @@ describe('createEChartsOption', () => {
       ],
     })
   })
+
+  it('uses percentage pane geometry so the chart remains usable in compact cards', () => {
+    const option = createEChartsOption(candles, 1)
+
+    expect(option.grid).toEqual([
+      expect.objectContaining({ top: '7%', height: '58%' }),
+      expect.objectContaining({ top: '69%', height: '15%' }),
+    ])
+  })
 })
 
 describe('formatEChartsTime', () => {
