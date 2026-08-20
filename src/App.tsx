@@ -6,6 +6,9 @@ import {
   MAX_WINDOW_MS,
 } from './features/chart-settings/chartSettings'
 import { CustomCanvasChart } from './features/custom-canvas/CustomCanvasChart'
+import { EChartsPanel } from './features/echarts/EChartsPanel'
+import { KLineChartPanel } from './features/kline-chart/KLineChartPanel'
+import { LightweightChart } from './features/lightweight-charts/LightweightChart'
 import type { VolatilityMode } from './domain/market/volatility'
 import './App.css'
 
@@ -133,6 +136,60 @@ function CandleWorkspace({
           <span className="learning-badge">DUAL CANVAS</span>
         </div>
         <CustomCanvasChart candles={candles} visibleCount={visibleCount} />
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="lightweight-chart-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="lightweight-chart-title">Lightweight Charts</h2>
+            <p>
+              setData 初始化 · update 增量更新 · 库内置坐标轴与十字线
+            </p>
+          </div>
+          <span className="learning-badge">MATURE LIBRARY</span>
+        </div>
+        <LightweightChart
+          candles={candles}
+          visibleCount={visibleCount}
+        />
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="kline-chart-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="kline-chart-title">KLineChart</h2>
+            <p>DataLoader · MA 覆盖层 · VOL pane · 完整 K 线交互</p>
+          </div>
+          <span className="learning-badge">TRADING TERMINAL</span>
+        </div>
+        <KLineChartPanel
+          candles={candles}
+          visibleCount={visibleCount}
+          candleIntervalMs={candleIntervalMs}
+        />
+      </section>
+
+      <section
+        className="custom-chart-panel"
+        aria-labelledby="echarts-title"
+      >
+        <div className="custom-chart-heading">
+          <div>
+            <h2 id="echarts-title">ECharts</h2>
+            <p>setOption 配置更新 · K 线与成交量双 Grid · DataZoom</p>
+          </div>
+          <span className="learning-badge">GENERAL VISUALIZATION</span>
+        </div>
+        <EChartsPanel
+          candles={candles}
+          visibleCount={visibleCount}
+        />
       </section>
     </>
   )
