@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 
@@ -66,10 +66,50 @@ describe('App comparison workspace', () => {
     ])
   })
 
+  it('uses a scrolling comparison layout so chart cards keep a readable height', () => {
+    render(<App />)
+
+    expect(screen.getByRole('main').getAttribute('data-layout')).toBe(
+      'scrolling-comparison',
+    )
+  })
+
+  it('groups live configuration and feed controls in one market console', () => {
+    render(<App />)
+
+    const consoleRegion = screen.getByRole('region', {
+      name: '共享行情控制台',
+    })
+
+    expect(
+      within(consoleRegion).getByRole('region', { name: '图表参数' }),
+    ).toBeTruthy()
+    expect(
+      within(consoleRegion).getByRole('region', {
+        name: 'Simulated Data Flow',
+      }),
+    ).toBeTruthy()
+  })
+
   it('announces feed state and labels the custom chart count as a default window', () => {
     render(<App />)
 
     expect(screen.getByRole('status').textContent).toBe('已暂停')
     expect(screen.getByText(/默认窗口 1 bars/)).toBeTruthy()
+  })
+
+  it('keeps keyboard focus in the period controls when the feed is rebuilt', () => {
+    render(<App />)
+
+    const periodGroup = screen.getByRole('group', { name: 'K线周期' })
+    const oneSecondButton = within(periodGroup).getByRole('button', {
+      name: '1s',
+    })
+
+    oneSecondButton.focus()
+    fireEvent.click(oneSecondButton)
+
+    expect(document.activeElement).toBe(oneSecondButton)
+    expect(oneSecondButton.getAttribute('aria-pressed')).toBe('true')
   })
 })
