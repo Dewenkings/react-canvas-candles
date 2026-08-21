@@ -6,13 +6,6 @@ Four ways to render the same real-time OHLC feed in React: a custom Canvas engin
 
 > This is a learning lab and engineering case study—not a charting-library benchmark. It compares architecture, integration style, interaction, and maintenance boundaries under the same demo scenario. It does not claim statistically measured performance rankings.
 
-## Demo
-
-> **Live demo:** Coming soon<br>
-> **GIF preview:** Coming soon
-
-An interactive deployment is the primary showcase because zooming, panning, crosshairs, period changes, and volatility modes cannot be understood from a static image alone. A short GIF will be added as a GitHub preview after deployment.
-
 ## Why this project exists
 
 Calling a mature chart API can solve a product requirement quickly, but it hides the path from market data to pixels. Building everything from scratch exposes that path, but can also become a toy implementation with no production reference point.

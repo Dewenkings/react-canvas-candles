@@ -34,14 +34,23 @@ interface CandleWorkspaceProps {
   tickIntervalMs: number
   windowMs: number
   volatilityMode: VolatilityMode
+  onCandleIntervalChange: (value: number) => void
+  onTickIntervalChange: (value: number) => void
+  onWindowChange: (value: number) => void
+  onVolatilityModeChange: (value: VolatilityMode) => void
 }
 
-function CandleWorkspace({
+type CandleDataWorkspaceProps = Pick<
+  CandleWorkspaceProps,
+  'candleIntervalMs' | 'tickIntervalMs' | 'windowMs' | 'volatilityMode'
+>
+
+function CandleDataWorkspace({
   candleIntervalMs,
   tickIntervalMs,
   windowMs,
   volatilityMode,
-}: CandleWorkspaceProps) {
+}: CandleDataWorkspaceProps) {
   const endTimestamp =
     Math.floor(FEED_ANCHOR_TIMESTAMP / candleIntervalMs) * candleIntervalMs
   const initialCount = getCandleCountForDuration(
@@ -65,14 +74,45 @@ function CandleWorkspace({
   return (
     <>
       <section className="feed-panel" aria-labelledby="feed-title">
-        <div className="panel-heading">
-          <div>
+          <div className="feed-summary">
             <p className="panel-label">SHARED MARKET FEED</p>
-            <h2 id="feed-title">模拟行情</h2>
-            <p>
+            <h2 id="feed-title">Simulated Data Flow</h2>
+            <p className="feed-meta">
               {candles.length} 根历史 K 线 · {candleIntervalMs / 1_000} 秒周期
             </p>
           </div>
+
+          {latestCandle ? (
+            <dl className="ohlc-grid">
+              <div className="timestamp-row market-time">
+                <dt>Current</dt>
+                <dd>{dateTimeFormatter.format(latestCandle.timestamp)}</dd>
+              </div>
+              <div>
+                <dt>Open</dt>
+                <dd>{latestCandle.open.toFixed(4)}</dd>
+              </div>
+              <div>
+                <dt>High</dt>
+                <dd>{latestCandle.high.toFixed(4)}</dd>
+              </div>
+              <div>
+                <dt>Low</dt>
+                <dd>{latestCandle.low.toFixed(4)}</dd>
+              </div>
+              <div>
+                <dt>Close</dt>
+                <dd>{latestCandle.close.toFixed(4)}</dd>
+              </div>
+              <div>
+                <dt>Volume</dt>
+                <dd>{latestCandle.volume.toLocaleString('zh-CN')}</dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="empty-feed">当前没有行情数据。</p>
+          )}
+
           <div className="feed-actions">
             <span
               className={`status ${isRunning ? 'running' : ''}`}
@@ -83,51 +123,23 @@ function CandleWorkspace({
             </span>
             <div className="controls" aria-label="行情控制">
               <button type="button" onClick={start} disabled={isRunning}>
-                开始
+                Start
               </button>
               <button type="button" onClick={pause} disabled={!isRunning}>
-                暂停
+                Pause
               </button>
               <button type="button" className="secondary" onClick={reset}>
-                重置
+                Reset
               </button>
             </div>
           </div>
-        </div>
-
-        {latestCandle ? (
-          <dl className="ohlc-grid">
-            <div className="timestamp-row market-time">
-              <dt>当前周期</dt>
-              <dd>{dateTimeFormatter.format(latestCandle.timestamp)}</dd>
-            </div>
-            <div>
-              <dt>Open</dt>
-              <dd>{latestCandle.open.toFixed(4)}</dd>
-            </div>
-            <div>
-              <dt>High</dt>
-              <dd>{latestCandle.high.toFixed(4)}</dd>
-            </div>
-            <div>
-              <dt>Low</dt>
-              <dd>{latestCandle.low.toFixed(4)}</dd>
-            </div>
-            <div>
-              <dt>Close</dt>
-              <dd>{latestCandle.close.toFixed(4)}</dd>
-            </div>
-            <div>
-              <dt>Volume</dt>
-              <dd>{latestCandle.volume.toLocaleString('zh-CN')}</dd>
-            </div>
-          </dl>
-        ) : (
-          <p>当前没有行情数据。</p>
-        )}
       </section>
 
-      <section className="comparison-grid" aria-label="K 线渲染方案对比">
+      <section
+        id="comparison"
+        className="comparison-grid"
+        aria-label="K 线渲染方案对比"
+      >
         <section
           className="custom-chart-panel chart-card--custom"
           aria-labelledby="custom-chart-title"
@@ -209,6 +221,40 @@ function CandleWorkspace({
   )
 }
 
+function CandleWorkspace({
+  candleIntervalMs,
+  tickIntervalMs,
+  windowMs,
+  volatilityMode,
+  onCandleIntervalChange,
+  onTickIntervalChange,
+  onWindowChange,
+  onVolatilityModeChange,
+}: CandleWorkspaceProps) {
+  return (
+    <section className="market-console" aria-label="共享行情控制台">
+      <ChartSettingsPanel
+        candleIntervalMs={candleIntervalMs}
+        tickIntervalMs={tickIntervalMs}
+        windowMs={windowMs}
+        volatilityMode={volatilityMode}
+        onCandleIntervalChange={onCandleIntervalChange}
+        onTickIntervalChange={onTickIntervalChange}
+        onWindowChange={onWindowChange}
+        onVolatilityModeChange={onVolatilityModeChange}
+      />
+      <div className="candle-data-workspace" key={candleIntervalMs}>
+        <CandleDataWorkspace
+          candleIntervalMs={candleIntervalMs}
+          tickIntervalMs={tickIntervalMs}
+          windowMs={windowMs}
+          volatilityMode={volatilityMode}
+        />
+      </div>
+    </section>
+  )
+}
+
 function App() {
   const [candleIntervalMs, setCandleIntervalMs] = useState(
     DEFAULT_CANDLE_INTERVAL_MS,
@@ -221,27 +267,25 @@ function App() {
     useState<VolatilityMode>('normal')
 
   return (
-    <main className="app-shell">
+    <main className="app-shell" data-layout="scrolling-comparison">
       <header className="page-header">
-        <div className="header-copy">
-          <p className="eyebrow">RENDERING LAB / 04 APPROACHES</p>
+        <div className="header-copy" id="overview">
           <h1>
-            React Candlestick
-            <span> Rendering Lab</span>
+            <span className="title-line">React Candlestick</span>
+            <span className="title-accent">Rendering Lab</span>
           </h1>
-          <p className="page-intro">
-            同一份实时 OHLC 行情，四种 React K 线渲染路径。
-            从零理解像素链路，再对照成熟库的工程边界。
-          </p>
         </div>
-        <div className="header-manifest" aria-label="实验说明">
-          <span>ONE FEED</span>
-          <span>FOUR RENDERERS</span>
-          <span>FAIR COMPARISON</span>
+        <nav className="page-nav" aria-label="页面导航">
+          <a href="#overview">Dashboard</a>
+          <a href="#comparison">Comparisons</a>
+        </nav>
+        <div className="live-feed-badge" aria-label="实验范围">
+          <span aria-hidden="true" />
+          ONE FEED · FOUR RENDERERS
         </div>
       </header>
 
-      <ChartSettingsPanel
+      <CandleWorkspace
         candleIntervalMs={candleIntervalMs}
         tickIntervalMs={tickIntervalMs}
         windowMs={windowMs}
@@ -250,14 +294,6 @@ function App() {
         onTickIntervalChange={setTickIntervalMs}
         onWindowChange={setWindowMs}
         onVolatilityModeChange={setVolatilityMode}
-      />
-
-      <CandleWorkspace
-        key={candleIntervalMs}
-        candleIntervalMs={candleIntervalMs}
-        tickIntervalMs={tickIntervalMs}
-        windowMs={windowMs}
-        volatilityMode={volatilityMode}
       />
     </main>
   )
